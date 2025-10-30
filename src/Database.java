@@ -1,7 +1,7 @@
 import java.sql.*;
 
 public class Database {
-    //conntetti
+    //connetti
 
     //query
     private Connection connection;
@@ -28,8 +28,76 @@ public class Database {
         
         String query = "SELECT * FROM menu";
         try {
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet rs = statement.executeQuery(); //Creo un insieme
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery(); //Creo un insieme
+            while (rs.next()) {
+                result += rs.getString("id") + "\t";
+                result += rs.getString("piatto") + "\t";
+                result += rs.getString("prezzo") + "\t";
+                result += rs.getString("quantita") + "\n";
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore di query: " +  e.getMessage());
+            return null;
+        }
+
+        return result;
+    }
+
+    public String select(int id) {
+        String result = "";
+
+        //Gestisco l'eccezione al posto di propagarla
+        try {
+            if(connection == null || !connection.isValid(5)) {  //Contolla la connessione al database
+                System.err.println("Errore di connessione al database");
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore di connessione al database");
+            return null;
+        }
+
+        String query = "SELECT * FROM menu WHERE id = ?";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery(); //Creo un insieme
+            while (rs.next()) {
+                result += rs.getString("id") + "\t";
+                result += rs.getString("piatto") + "\t";
+                result += rs.getString("prezzo") + "\t";
+                result += rs.getString("quantita") + "\n";
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore di query: " +  e.getMessage());
+            return null;
+        }
+
+        return result;
+    }
+
+    public String select(String nomePiatto) {
+        String result = "";
+
+        //Gestisco l'eccezione al posto di propagarla
+        try {
+            if(connection == null || !connection.isValid(5)) {  //Contolla la connessione al database
+                System.err.println("Errore di connessione al database");
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore di connessione al database");
+            return null;
+        }
+
+        String query = "SELECT * FROM menu WHERE piatto LIKE ?";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, "%" + nomePiatto + "%");
+
+            ResultSet rs = stmt.executeQuery(); //Creo un insieme
             while (rs.next()) {
                 result += rs.getString("id") + "\t";
                 result += rs.getString("piatto") + "\t";
@@ -69,6 +137,60 @@ public class Database {
         } catch (SQLException e)
         {
             System.err.println("Errore di query: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean update(int id, String nomePiatto, float prezzo, int quantita) {
+        //Gestisco l'eccezione al posto di propagarla
+        try {
+            if(connection == null || !connection.isValid(5)) {  //Contolla la connessione al database
+                System.err.println("Errore di connessione al database");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore di connessione al database");
+            return false;
+        }
+
+        String query = "UPDATE menu SET piatto = ?, prezzo = ?, quantita = ? WHERE id = ?";
+
+        try{
+            PreparedStatement stmt  = connection.prepareStatement(query);
+            stmt.setString(1, nomePiatto);
+            stmt.setFloat(2, prezzo);
+            stmt.setInt(3, quantita);
+            stmt.setInt(4, id);
+            stmt.executeUpdate();
+        } catch (SQLException e){
+            System.err.println("Errore di query: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean delete(int id){
+        //Gestisco l'eccezione al posto di propagarla
+        try {
+            if(connection == null || !connection.isValid(5)) {  //Contolla la connessione al database
+                System.err.println("Errore di connessione al database");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore di connessione al database");
+            return false;
+        }
+
+        String query = "DELETE FROM menu WHERE id = ?";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Errore di connessione al database");
             return false;
         }
 
