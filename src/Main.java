@@ -11,40 +11,76 @@ public class Main {
             System.exit(-1);
         }
 
-        //Creo la tabella da parte grafica
+        gestioneUtente(db);
+        System.out.println("\n\nGrazie per aver usato 'Sushi_DB'!");
+    }
 
-        /*
+    public static void gestioneUtente(Database db){
         Scanner sc = new Scanner(System.in);
-        System.out.print("Inserisci il nome del piatto: ");
-        String nomePiatto = sc.nextLine();
-        System.out.print("Inserisci il prezzo: ");
-        float prezzo = sc.nextFloat();
-        sc.nextLine(); //
-        System.out.print("Inserisci la quantità: ");
-        int quantita = sc.nextInt();
-        sc.nextLine();
+        boolean continua = true;
+        System.out.println("BENVENUTO NEL SUSHI DB\n-------------------------------\n" +
+                "Opzioni: \n1)Insert\t2)Select\t3)Update\n4)Delete\t5)Esci dal DB");
 
-        if(db.insert(nomePiatto, prezzo, quantita))
-            System.out.println("Piatto inserito con successo");
-        */
+        do{
+            int scelta;
 
-        //Prove
-        System.out.println("Select all: \n" + db.selectAll());
-        System.out.println("--------\nPiatto con id 1: " + db.select(1));
-        System.out.println("--------\nPiatto con nome 'Udon': " + db.select("Udon"));
+            do {
+                System.out.print("Cosa vuoi fare: ");
+                scelta = sc.nextInt();
+                sc.nextLine();
+            } while (scelta < 1 || scelta > 5);
 
-        if(db.insert("tiger roll", 3, 2))
-            System.out.println("--------\nInsert piatto tiger roll: " + db.select("tiger roll"));
+            switch (scelta){
+                case 1:
+                    System.out.print("Inserisci il nome del piatto: ");
+                    String nome = sc.nextLine();
+                    System.out.print("Inserisci prezzo: ");
+                    float prezzo = sc.nextFloat();
+                    sc.nextLine();
+                    System.out.print("Inserisci il numero di pezzi: ");
+                    int pezzi = sc.nextInt();
+                    sc.nextLine();
 
-        if(db.update(4, "Udon frutti di mare", 4.50F, 1))
-            System.out.println("--------\nUpdated Udon: " + db.select("Udon frutti di mare"));
+                    db.insert(nome, prezzo, pezzi);
+                    System.out.println("\nPiatto inserito con successo: " + db.select(nome) + "\n");
+                    break;
+                case 2:
+                    System.out.print("Inserisci 'ALL' per vedere tutto il db, oppure il nome del piatto per vederne le informazioni:");
+                    nome = sc.nextLine();
 
-        db.delete(12);
-        System.out.println("-------\nSelect all dopo cancellazione del 11: \n" + db.selectAll());
+                    if(nome.equals("ALL"))
+                        System.out.println("\nMENU:\n" + db.selectAll() + "\n");
+                    else
+                        System.out.println("\nPiatto cercato: " + db.select(nome) + "\n");
+                    break;
+                case 3:
+                    System.out.print("Inserisci l'id del piatto da modificare:");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Inserisci il nuovo nome del piatto: ");
+                    nome = sc.nextLine();
+                    System.out.print("Inserisci il nuovo prezzo: ");
+                    prezzo = sc.nextFloat();
+                    sc.nextLine();
+                    System.out.print("Inserisci il nuovo numero di pezzi: ");
+                    pezzi = sc.nextInt();
+                    sc.nextLine();
 
-        //if(db.insert("Udon, 5, 1'); DROP DB sushi; --", 5, 1))    Devo fare attenzione alle SQL injection --> Le blocco nell'insert con i '?' e il stmt.set...()
-        //    System.out.println("Piatto inserito con successo");
+                    db.update(id, nome, prezzo, pezzi);
+                    System.out.println("\nPiatto modificato con successo: " + db.select(nome) + "\n");
+                    break;
+                case 4:
+                    System.out.print("Inserisci l'id del piatto da eliminare:");
+                    id = sc.nextInt();
+                    sc.nextLine();
 
-        System.out.println(db.selectAll());
+                    db.delete(id);
+                    System.out.println("\nPiatto eliminato con successo");
+                    break;
+                case 5:
+                    continua = false;
+                    break;
+            }
+        } while(continua);
     }
 }
