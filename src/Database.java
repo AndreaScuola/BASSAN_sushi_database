@@ -5,11 +5,19 @@ public class Database {
 
     //query
     private Connection connection;
+    private static Database instance; //Database static --> uso sempre istance in tutte le classi
 
-    public Database() throws SQLException {     //Mettendo qui l'eccezione la propago --> Chi mi chiama deve gestire l'eccezione --> Nel main blocco l'istanza di un che non funziona
+    private Database() throws SQLException {     //Mettendo qui l'eccezione la propago --> Chi mi chiama deve gestire l'eccezione --> Nel main blocco l'istanza di un che non funziona
         String url = "jdbc:sqlite:database/sushi.db"; //Specifico cosa uso ed il file da usare
         connection = DriverManager.getConnection(url);  //Stiamo usando un Driver --> software che mette in comunicazione ......FINISCI
         System.out.println("Connected to database");
+    }
+
+    //Metto il costruttore private perché non vengano creati oggetti diversi --> creo l'istance (nuovo DB) con getIstance
+    public static Database getInstance() throws SQLException {
+        if(instance == null)
+            instance = new Database();
+        return instance;
     }
 
     public String selectAll() {

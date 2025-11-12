@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         Database db = null; //Divido l'istanza
         try{
-            db = new Database();
+            db = Database.getInstance(); //--> Non creo un nuovo db ogni volta ma creo un db comune a tutti --> lo prendo con getIstance
         } catch (SQLException e) {  //Se il database non si connette correttamente --> esce dal programma
             System.err.println("Errore di connessione al database" + e.getMessage());
             System.exit(-1);
